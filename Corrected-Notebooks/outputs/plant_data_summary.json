@@ -1,0 +1,403 @@
+{
+  "label_spellings": {
+    "swat_attack_file": {
+      "Normal": 395298,
+      "Attack": 54584,
+      "A ttack": 37
+    },
+    "swat_normal_file": {
+      "Normal": 495000
+    }
+  },
+  "wadi_cleaning": {
+    "empty_columns_dropped": [
+      "2_LS_001_AL",
+      "2_LS_002_AL",
+      "2_P_001_STATUS",
+      "2_P_002_STATUS"
+    ],
+    "label_column": "Attack LABLE (1:No Attack, -1:Attack)",
+    "normal_interpolated_columns": [
+      "1_AIT_002_PV",
+      "1_AIT_004_PV",
+      "2B_AIT_004_PV",
+      "3_AIT_004_PV"
+    ],
+    "normal_missing_values_before": 34,
+    "attack_interpolated_columns": [],
+    "attack_missing_values_before": 0
+  },
+  "comparison_with_original_arrays": {
+    "swat_normal.npy": "identical",
+    "swat_attack.npy": "identical",
+    "swat_attack_labels.npy": "identical",
+    "wadi_normal.npy": "identical",
+    "wadi_attack.npy": "identical",
+    "wadi_attack_labels.npy": "identical"
+  },
+  "swat": {
+    "normal_steps": 49500,
+    "attack_steps": 44991,
+    "attack_steps_labelled": 5493,
+    "windows": {
+      "normal": 4948,
+      "attack": 4497,
+      "anomalous_any": 648,
+      "anomalous_half": 549,
+      "earlier": {
+        "normal": 4948,
+        "attack": 4497,
+        "anomalous": 648
+      }
+    },
+    "regimes": {
+      "chosen_k": 12,
+      "k_range": [
+        8,
+        30
+      ],
+      "silhouette": 0.3963247239589691,
+      "silhouette_curve": {
+        "2": 0.8857709765434265,
+        "3": 0.41454625129699707,
+        "4": 0.33327236771583557,
+        "5": 0.33239927887916565,
+        "6": 0.366506427526474,
+        "7": 0.36429405212402344,
+        "8": 0.37979865074157715,
+        "9": 0.2887268662452698,
+        "10": 0.38714906573295593,
+        "11": 0.3079074025154114,
+        "12": 0.3963247239589691,
+        "13": 0.32316073775291443,
+        "14": 0.3385215699672699,
+        "15": 0.33937302231788635,
+        "16": 0.3528222441673279,
+        "17": 0.3615599572658539,
+        "18": 0.3762315511703491,
+        "19": 0.3703669011592865,
+        "20": 0.37156978249549866,
+        "21": 0.3598518967628479,
+        "22": 0.3583785593509674,
+        "23": 0.357115775346756,
+        "24": 0.33195629715919495,
+        "25": 0.3752705454826355,
+        "26": 0.3465840816497803,
+        "27": 0.35617008805274963,
+        "28": 0.3255438506603241,
+        "29": 0.35195860266685486,
+        "30": 0.3216804265975952
+      },
+      "split": {
+        "meta_train": [
+          1,
+          9,
+          5,
+          2,
+          10
+        ],
+        "meta_val": [
+          0
+        ],
+        "meta_test": [
+          4,
+          8
+        ],
+        "sizes": {
+          "0": 396,
+          "1": 2567,
+          "2": 387,
+          "3": 2,
+          "4": 319,
+          "5": 258,
+          "6": 13,
+          "7": 1,
+          "8": 326,
+          "9": 419,
+          "10": 256,
+          "11": 4
+        },
+        "dropped_small": [
+          3,
+          6,
+          7,
+          11
+        ],
+        "min_size": 80,
+        "source": "original split (regimes reproduced exactly)"
+      },
+      "summary_dims": 102,
+      "table": [
+        {
+          "regime": 0,
+          "role": "meta_val",
+          "normal_windows": 396,
+          "attack_windows": 407,
+          "anomalous_any": 53,
+          "normal_in_attack_file": 354,
+          "testable": true
+        },
+        {
+          "regime": 1,
+          "role": "meta_train",
+          "normal_windows": 2567,
+          "attack_windows": 2387,
+          "anomalous_any": 129,
+          "normal_in_attack_file": 2258,
+          "testable": true
+        },
+        {
+          "regime": 2,
+          "role": "meta_train",
+          "normal_windows": 387,
+          "attack_windows": 251,
+          "anomalous_any": 35,
+          "normal_in_attack_file": 216,
+          "testable": true
+        },
+        {
+          "regime": 3,
+          "role": "dropped",
+          "normal_windows": 2,
+          "attack_windows": 6,
+          "anomalous_any": 6,
+          "normal_in_attack_file": 0,
+          "testable": false
+        },
+        {
+          "regime": 4,
+          "role": "meta_test",
+          "normal_windows": 319,
+          "attack_windows": 343,
+          "anomalous_any": 28,
+          "normal_in_attack_file": 315,
+          "testable": true
+        },
+        {
+          "regime": 5,
+          "role": "meta_train",
+          "normal_windows": 258,
+          "attack_windows": 215,
+          "anomalous_any": 21,
+          "normal_in_attack_file": 194,
+          "testable": true
+        },
+        {
+          "regime": 6,
+          "role": "dropped",
+          "normal_windows": 13,
+          "attack_windows": 319,
+          "anomalous_any": 319,
+          "normal_in_attack_file": 0,
+          "testable": false
+        },
+        {
+          "regime": 7,
+          "role": "dropped",
+          "normal_windows": 1,
+          "attack_windows": 14,
+          "anomalous_any": 13,
+          "normal_in_attack_file": 1,
+          "testable": false
+        },
+        {
+          "regime": 8,
+          "role": "meta_test",
+          "normal_windows": 326,
+          "attack_windows": 303,
+          "anomalous_any": 20,
+          "normal_in_attack_file": 283,
+          "testable": true
+        },
+        {
+          "regime": 9,
+          "role": "meta_train",
+          "normal_windows": 419,
+          "attack_windows": 15,
+          "anomalous_any": 1,
+          "normal_in_attack_file": 14,
+          "testable": false
+        },
+        {
+          "regime": 10,
+          "role": "meta_train",
+          "normal_windows": 256,
+          "attack_windows": 221,
+          "anomalous_any": 13,
+          "normal_in_attack_file": 208,
+          "testable": false
+        },
+        {
+          "regime": 11,
+          "role": "dropped",
+          "normal_windows": 4,
+          "attack_windows": 16,
+          "anomalous_any": 10,
+          "normal_in_attack_file": 6,
+          "testable": false
+        }
+      ]
+    }
+  },
+  "wadi": {
+    "normal_steps": 78457,
+    "attack_steps": 17280,
+    "attack_steps_labelled": 1010,
+    "windows": {
+      "normal": 7843,
+      "attack": 1726,
+      "anomalous_any": 140,
+      "anomalous_half": 102,
+      "earlier": {
+        "normal": 7843,
+        "attack": 1726,
+        "anomalous": 140
+      }
+    },
+    "regimes": {
+      "chosen_k": 8,
+      "k_range": [
+        8,
+        30
+      ],
+      "silhouette": 0.10478346794843674,
+      "silhouette_curve": {
+        "2": 0.21829423308372498,
+        "3": 0.22256815433502197,
+        "4": 0.11763487756252289,
+        "5": 0.1032840833067894,
+        "6": 0.11042027920484543,
+        "7": 0.10047221928834915,
+        "8": 0.10478346794843674,
+        "9": 0.08470853418111801,
+        "10": 0.09691298007965088,
+        "11": 0.08376317471265793,
+        "12": 0.09602648764848709,
+        "13": 0.10167986899614334,
+        "14": 0.08625543862581253,
+        "15": 0.08230006694793701,
+        "16": 0.0882975235581398,
+        "17": 0.08574076741933823,
+        "18": 0.09327172487974167,
+        "19": 0.07479068636894226,
+        "20": 0.09514331817626953,
+        "21": 0.09531567245721817,
+        "22": 0.08491749316453934,
+        "23": 0.07802214473485947,
+        "24": 0.08316688239574432,
+        "25": 0.08582387864589691,
+        "26": 0.08932969719171524,
+        "27": 0.08482848107814789,
+        "28": 0.0998271033167839,
+        "29": 0.09384597092866898,
+        "30": 0.10344686359167099
+      },
+      "split": {
+        "meta_train": [
+          0,
+          4,
+          2,
+          5,
+          3
+        ],
+        "meta_val": [
+          6
+        ],
+        "meta_test": [
+          1,
+          7
+        ],
+        "sizes": {
+          "0": 133,
+          "1": 958,
+          "2": 1411,
+          "3": 1925,
+          "4": 623,
+          "5": 971,
+          "6": 1491,
+          "7": 331
+        },
+        "dropped_small": [],
+        "min_size": 80,
+        "source": "original split (regimes reproduced exactly)"
+      },
+      "summary_dims": 246,
+      "table": [
+        {
+          "regime": 0,
+          "role": "meta_train",
+          "normal_windows": 133,
+          "attack_windows": 21,
+          "anomalous_any": 5,
+          "normal_in_attack_file": 16,
+          "testable": false
+        },
+        {
+          "regime": 1,
+          "role": "meta_test",
+          "normal_windows": 958,
+          "attack_windows": 156,
+          "anomalous_any": 3,
+          "normal_in_attack_file": 153,
+          "testable": false
+        },
+        {
+          "regime": 2,
+          "role": "meta_train",
+          "normal_windows": 1411,
+          "attack_windows": 125,
+          "anomalous_any": 12,
+          "normal_in_attack_file": 113,
+          "testable": false
+        },
+        {
+          "regime": 3,
+          "role": "meta_train",
+          "normal_windows": 1925,
+          "attack_windows": 159,
+          "anomalous_any": 9,
+          "normal_in_attack_file": 150,
+          "testable": false
+        },
+        {
+          "regime": 4,
+          "role": "meta_train",
+          "normal_windows": 623,
+          "attack_windows": 67,
+          "anomalous_any": 7,
+          "normal_in_attack_file": 60,
+          "testable": false
+        },
+        {
+          "regime": 5,
+          "role": "meta_train",
+          "normal_windows": 971,
+          "attack_windows": 152,
+          "anomalous_any": 29,
+          "normal_in_attack_file": 123,
+          "testable": true
+        },
+        {
+          "regime": 6,
+          "role": "meta_val",
+          "normal_windows": 1491,
+          "attack_windows": 1019,
+          "anomalous_any": 71,
+          "normal_in_attack_file": 948,
+          "testable": true
+        },
+        {
+          "regime": 7,
+          "role": "meta_test",
+          "normal_windows": 331,
+          "attack_windows": 27,
+          "anomalous_any": 4,
+          "normal_in_attack_file": 23,
+          "testable": false
+        }
+      ]
+    }
+  },
+  "git_commit": "85c9644f9e8f5ee6eae4e65bf032fc8577223ed3",
+  "timestamp": "2026-09-24T06:20:49"
+}

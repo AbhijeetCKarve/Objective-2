@@ -75,6 +75,6 @@
     "D-12": "only 312 training timesteps (29 normal windows at stride 10): too few to draw support sets and hold out normal data. Label-free reason.",
     "P-4": "sensor-dropout (flat-line) anomaly that a reconstruction model cannot flag. This reason was found by inspecting the test anomalies in the original notebook 04, so the exclusion is post hoc. P-4 is still scored and reported separately as a sensitivity row."
   },
-  "git_commit": "949e48b0f51a13289cdd327f73a3a76ac46d4ef5",
-  "timestamp": "2026-09-24T05:18:31"
+  "git_commit": "85c9644f9e8f5ee6eae4e65bf032fc8577223ed3",
+  "timestamp": "2026-09-24T06:13:07"
 }

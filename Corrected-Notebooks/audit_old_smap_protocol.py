@@ -10,8 +10,8 @@ What it does, on CPU, with the real SMAP files and the original saved checkpoint
   3. Scores the same channels with an UNTRAINED random LSTM-AE and with a model-free
      score, under the old window protocol and under point-wise scoring of the test file.
 
-Usage:  python corrected_legacy/audit_old_smap_protocol.py <folder with old .pt files>
-Writes: corrected_legacy/audit/audit_old_smap_protocol.json
+Usage:  python Corrected-Notebooks/audit_old_smap_protocol.py <folder with old .pt files>
+Writes: Corrected-Notebooks/audit/audit_old_smap_protocol.json
 """
 import copy
 import os
@@ -23,7 +23,7 @@ from sklearn.ensemble import IsolationForest
 from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import smap_common as sc  # noqa: E402
+import maml_common as sc  # noqa: E402
 
 CKPT_DIR = sys.argv[1] if len(sys.argv) > 1 else "/home/user/abhijeetckarve/maml_ae"
 DEVICE = torch.device("cpu")

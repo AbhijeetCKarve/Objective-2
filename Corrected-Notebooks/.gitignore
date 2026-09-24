@@ -1,0 +1,7 @@
+outputs/*.pkl
+outputs/*.pt
+outputs/*.npz
+outputs/SMOKE/
+_smoke_*.ipynb
+__pycache__/
+.pytest_cache/

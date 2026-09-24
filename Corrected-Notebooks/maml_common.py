@@ -1,7 +1,7 @@
-"""Shared code for the corrected SMAP notebooks (01, 02, 03, 04, 06).
+"""Shared code for the corrected MAML-AE notebooks (Notebook_01 to Notebook_10).
 
-Every corrected notebook imports from this file instead of re-defining the model,
-the meta-learning loop or the metrics. The original notebooks each carried their own
+Every notebook imports from this file instead of re-defining the data handling, the
+model, the meta-learning loop or the metrics. The original notebooks each carried their own
 copy of this code, which is how a broken training loop (Kaggle notebook
 "04-maml-training (3)") went unnoticed.
 """
@@ -60,15 +60,26 @@ def find_file(name, extra_roots=()):
     return None
 
 
+def data_roots(extra_roots=()):
+    """Where raw data is searched for: /kaggle/input (always), the folders listed in the
+    MAML_DATA_ROOT environment variable (separated by os.pathsep), SMAP_ROOT, and the
+    folder above this repository (so the data folders of a neighbouring checkout work)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    env = [r for r in os.environ.get("MAML_DATA_ROOT", "").split(os.pathsep) if r]
+    return [os.environ.get("SMAP_ROOT"), *extra_roots, *env, os.path.dirname(here)]
+
+
+def find_data_file(name, extra_roots=()):
+    return find_file(name, data_roots(extra_roots))
+
+
 def find_smap_raw(extra_roots=()):
     """Locate labeled_anomalies.csv and the train/ and test/ folders of the SMAP release."""
-    here = os.path.dirname(os.path.abspath(__file__))
-    roots = [os.environ.get("SMAP_ROOT"), *extra_roots,
-             os.path.join(here, "..", "SMAP - NASA"), os.getcwd()]
+    roots = data_roots(extra_roots)
     csv = find_file("labeled_anomalies.csv", roots)
     if csv is None:
         raise FileNotFoundError("labeled_anomalies.csv not found under /kaggle/input or "
-                                f"{roots}. Set SMAP_ROOT to the SMAP folder.")
+                                f"{roots}. Set MAML_DATA_ROOT to the folder holding the data.")
     base = os.path.dirname(csv)
     for dirpath, dirs, _ in os.walk(base):
         if "train" in dirs and "test" in dirs:
@@ -82,7 +93,7 @@ def output_dir(smoke=False):
     if os.path.isdir("/kaggle/working"):
         d = "/kaggle/working"
     else:
-        d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "corrected_legacy_out")
+        d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
     if smoke:
         d = os.path.join(d, "SMOKE")
     os.makedirs(d, exist_ok=True)
@@ -371,7 +382,7 @@ def meta_validation_loss(model, val_episodes, device, inner_lr, inner_steps):
 def train_maml(model, train_windows, val_episodes, device, *, seed, n_outer, val_every,
                inner_lr=0.01, inner_steps=10, outer_lr=1e-3, tasks_per_batch=4,
                support_size=20, query_size=20, use_scheduler=True, ckpt_path=None,
-               resume_from=None, log=print):
+               resume_from=None, patience=None, log=print):
     """Meta-train with FOMAML. Training episodes come from their own RNG (seeded by
     `seed`); validation uses the fixed `val_episodes`, so validating does not change the
     training sample stream. The best-validation state is returned. Checkpoints hold the
@@ -382,7 +393,8 @@ def train_maml(model, train_windows, val_episodes, device, *, seed, n_outer, val
     sched = (torch.optim.lr_scheduler.ReduceLROnPlateau(opt, "min", factor=0.5, patience=5,
                                                         min_lr=1e-5) if use_scheduler else None)
     state = {"step": 0, "best_val": float("inf"), "best_step": 0, "history": [],
-             "best_state": copy.deepcopy(model.state_dict()), "checks": {}}
+             "best_state": copy.deepcopy(model.state_dict()), "checks": {}, "bad_checks": 0,
+             "stopped_early": False}
     if resume_from is not None:
         ck = torch.load(resume_from, map_location=device, weights_only=False)
         model.load_state_dict(ck["model"]); opt.load_state_dict(ck["opt"])
@@ -390,11 +402,14 @@ def train_maml(model, train_windows, val_episodes, device, *, seed, n_outer, val
             sched.load_state_dict(ck["sched"])
         rng.set_state(ck["rng"])
         state.update({k: ck[k] for k in ["step", "best_val", "best_step", "history",
-                                         "best_state", "checks"]})
+                                         "best_state", "checks", "bad_checks",
+                                         "stopped_early"] if k in ck})
         log(f"resumed from {resume_from} at step {state['step']}")
     t0 = time.time()
     first_val = None
     for step in range(state["step"] + 1, n_outer + 1):
+        if state["stopped_early"]:
+            break
         batch = rng.choice(tasks, size=min(tasks_per_batch, len(tasks)), replace=False)
         eps = []
         for t in batch:
@@ -418,9 +433,14 @@ def train_maml(model, train_windows, val_episodes, device, *, seed, n_outer, val
             state["history"].append({"step": step, "train_loss": tl, "val_loss": vl,
                                      "lr": opt.param_groups[0]["lr"], "seconds": time.time() - t0})
             first_val = state["history"][0]["val_loss"]
-            if vl < state["best_val"]:
-                state.update(best_val=vl, best_step=step,
+            if vl < state["best_val"] - 1e-6:
+                state.update(best_val=vl, best_step=step, bad_checks=0,
                              best_state=copy.deepcopy(model.state_dict()))
+            else:
+                state["bad_checks"] += 1
+                if patience is not None and state["bad_checks"] >= patience:
+                    state["stopped_early"] = True
+                    log(f"early stop at step {step}: no improvement in {patience} checks")
             log(f"step {step:6d} | train {tl:.6f} | val {vl:.6f} | best {state['best_val']:.6f} "
                 f"@ {state['best_step']} | {time.time() - t0:.0f}s")
             state["step"] = step
@@ -434,8 +454,8 @@ def train_maml(model, train_windows, val_episodes, device, *, seed, n_outer, val
         log("WARNING: meta-validation loss is flat. The meta-model may not be training.")
     state["checks"]["val_loss_flat"] = bool(flat)
     model.load_state_dict(state["best_state"])
-    info = {k: state[k] for k in ["best_val", "best_step", "history", "checks"]}
-    info.update(steps_reached=state["step"], max_outer_steps=n_outer)
+    info = {k: state[k] for k in ["best_val", "best_step", "history", "checks", "stopped_early"]}
+    info.update(steps_reached=state["step"], max_outer_steps=n_outer, patience=patience)
     return model, info
 
 
@@ -565,3 +585,270 @@ def overlapping_fraction(sup_idx, query_idx, starts, window=WINDOW):
     s = starts[np.asarray(sup_idx)][None, :]
     q = starts[np.asarray(query_idx)][:, None]
     return float((np.abs(q - s) < window).any(axis=1).mean())
+
+
+# ===========================================================================
+# SWaT and WADI
+# ===========================================================================
+DOWNSAMPLE = 10
+PLANT_STRIDE = 10
+# Counts found by the earlier work (notebook 02b). The cleaning asserts against these.
+SWAT_EXPECTED = {"normal_rows": 495000, "attack_rows": 449919, "attack_labelled_rows": 54621,
+                 "sensors": 51}
+WADI_EXPECTED = {"normal_rows": 784571, "attack_rows": 172801, "attack_labelled_rows": 9977,
+                 "sensors": 123}
+WADI_EMPTY_COLS = ["2_LS_001_AL", "2_LS_002_AL", "2_P_001_STATUS", "2_P_002_STATUS"]
+WADI_INTERP_COLS = ["1_AIT_002_PV", "1_AIT_004_PV", "2B_AIT_004_PV", "3_AIT_004_PV"]
+# Window counts and anomalous-window counts reported by the earlier pipeline.
+OLD_WINDOW_COUNTS = {"swat": {"normal": 4948, "attack": 4497, "anomalous": 648},
+                     "wadi": {"normal": 7843, "attack": 1726, "anomalous": 140}}
+# The regime split used by the original work (swat_task_splits.json, wadi_task_splits.json),
+# with the regime sizes it recorded. Notebook_03 rebuilds the regimes, checks that the
+# sizes match these, and then uses this split so results stay comparable.
+ORIGINAL_REGIMES = {
+    "swat": {"k": 12, "meta_train": [1, 9, 5, 2, 10], "meta_val": [0], "meta_test": [4, 8],
+             "sizes": {0: 396, 1: 2567, 2: 387, 4: 319, 5: 258, 8: 326, 9: 419, 10: 256}},
+    "wadi": {"k": 8, "meta_train": [0, 4, 2, 5, 3], "meta_val": [6], "meta_test": [1, 7],
+             "sizes": {0: 133, 1: 958, 2: 1411, 3: 1925, 4: 623, 5: 971, 6: 1491, 7: 331}},
+}
+PLANT_FILES = {"swat": ("SWaT_Dataset_Normal_v1.xlsx", "SWaT_Dataset_Attack_v0.xlsx"),
+               "wadi": ("WADI_14days_new.csv", "WADI_attackdataLABLE.csv")}
+
+
+def load_swat_workbook(path):
+    """Row 1 of the SWaT workbooks is a stage header (P1, P2 ...); row 2 is the real header."""
+    import openpyxl
+    wb = openpyxl.load_workbook(path, read_only=True)
+    rows = wb[wb.sheetnames[0]].iter_rows(min_row=2, values_only=True)
+    header = [str(h).strip() if h is not None else h for h in next(rows)]
+    data = list(rows)
+    wb.close()
+    label_idx = next(i for i, h in enumerate(header) if h and h.replace(" ", "").lower() == "normal/attack")
+    sensor_idx = [i for i in range(len(header)) if i not in (0, label_idx)]
+    X = np.array([[r[i] for i in sensor_idx] for r in data], dtype=np.float32)
+    labels = [r[label_idx] for r in data]
+    return X, labels, [header[i] for i in sensor_idx]
+
+
+def swat_attack_mask(labels_raw):
+    """The attack file spells the label three ways: 'Normal', 'Attack' and 'A ttack'
+    (an internal space). All whitespace is removed before matching, and every row must
+    then read 'normal' or 'attack'. Returns the mask and the count of each raw spelling."""
+    raw = pd.Series([str(v) for v in labels_raw])
+    variants = raw.value_counts().to_dict()
+    norm = raw.str.replace(r"\s+", "", regex=True).str.lower()
+    unknown = set(norm) - {"normal", "attack"}
+    assert not unknown, f"unexpected SWaT label values: {unknown}"
+    mask = (norm == "attack").to_numpy()
+    n_non_normal = sum(c for v, c in variants.items() if v.replace(" ", "").lower() != "normal")
+    assert mask.sum() == n_non_normal, "attack count does not match the non-normal label variants"
+    return mask, variants
+
+
+def load_wadi(normal_path, attack_path):
+    """WADI.A2: drop the entirely empty columns, interpolate the scattered gaps, and remap
+    the attack label (1 = no attack, -1 = attack)."""
+    n = pd.read_csv(normal_path, low_memory=False)
+    a = pd.read_csv(attack_path, header=1, low_memory=False)     # a stray index row comes first
+    n.columns = [c.strip() for c in n.columns]
+    a.columns = [c.strip() for c in a.columns]
+    a = a.dropna(subset=["Row"])                                 # two blank rows at the end
+    label_col = next(c for c in a.columns if "Attack LABLE" in c)
+    lab = a[label_col].to_numpy()
+    assert set(np.unique(lab)) <= {1, -1}, f"unexpected WADI label values {np.unique(lab)}"
+    attack = lab == -1
+    meta = ["Row", "Date", "Time"]
+    sensors_n = [c for c in n.columns if c not in meta]
+    empty = [c for c in sensors_n if n[c].isna().all()]
+    assert sorted(empty) == sorted(WADI_EMPTY_COLS), f"empty columns differ: {empty}"
+    keep = [c for c in sensors_n if c not in empty]
+    assert keep == [c for c in a.columns if c not in meta + [label_col] + empty], "column order differs"
+    report = {"empty_columns_dropped": empty, "label_column": label_col}
+    out = []
+    for name, df in [("normal", n), ("attack", a)]:
+        df = df[keep].apply(pd.to_numeric, errors="coerce")
+        gappy = [c for c in keep if df[c].isna().any()]
+        report[f"{name}_interpolated_columns"] = gappy
+        report[f"{name}_missing_values_before"] = int(df.isna().sum().sum())
+        for c in gappy:
+            df[c] = df[c].interpolate(method="linear", limit_direction="both")
+        assert df.isna().sum().sum() == 0
+        out.append(df.to_numpy(dtype=np.float32))
+    return out[0], out[1], attack, keep, report
+
+
+def downsample_values(x, factor=DOWNSAMPLE):
+    """Every `factor`-th row, after trimming to a multiple of `factor` (as in the earlier work)."""
+    n = len(x) // factor * factor
+    return x[:n:factor]
+
+
+def downsample_labels_or(y, factor=DOWNSAMPLE):
+    """A downsampled step is an attack if any of its `factor` raw rows is an attack."""
+    n = len(y) // factor
+    return np.asarray(y[:n * factor]).reshape(n, factor).any(axis=1)
+
+
+def minmax_scale_plant(Xn, Xa):
+    """MinMax fitted on the normal stream only; attack data transformed and clipped to [0, 1]."""
+    sc_ = MinMaxScaler().fit(Xn)
+    return (sc_.transform(Xn).astype(np.float32),
+            np.clip(sc_.transform(Xa), 0, 1).astype(np.float32),
+            {"data_min": sc_.data_min_.astype(np.float32), "data_max": sc_.data_max_.astype(np.float32)})
+
+
+def windows_with_labels(X, y=None, window=WINDOW, stride=PLANT_STRIDE):
+    """Windows plus two labels: 'any' (the earlier rule: at least one attack step) and
+    'half' (stricter: at least 50% attack steps). Also returns each window's start index."""
+    W = create_windows(X, window, stride)
+    starts = np.arange(len(W)) * stride
+    if y is None:
+        return W, starts
+    frac = np.array([np.asarray(y[s:s + window]).mean() for s in starts])
+    return W, starts, (frac > 0).astype(int), (frac >= 0.5).astype(int)
+
+
+def regime_summaries(windows):
+    """Each window summarised by the per-feature mean and standard deviation over time."""
+    return np.concatenate([windows.mean(axis=1), windows.std(axis=1)], axis=1)
+
+
+def fit_regimes(normal_windows, k_values, seed=42, n_init=10):
+    """k-means on standardised window summaries for every k; silhouette per k."""
+    from sklearn.cluster import KMeans
+    from sklearn.metrics import silhouette_score
+    from sklearn.preprocessing import StandardScaler
+    S = regime_summaries(normal_windows)
+    ss = StandardScaler().fit(S)
+    Z = ss.transform(S)
+    fits = {}
+    for k in k_values:
+        km = KMeans(n_clusters=k, n_init=n_init, random_state=seed).fit(Z)
+        fits[k] = {"silhouette": float(silhouette_score(Z, km.labels_)), "labels": km.labels_,
+                   "centroids": km.cluster_centers_}
+    return {"scaler_mean": ss.mean_, "scaler_scale": ss.scale_, "fits": fits,
+            "summary_dims": S.shape[1]}
+
+
+def assign_regimes(windows, scaler_mean, scaler_scale, centroids):
+    """Nearest centroid in the same standardised summary space."""
+    Z = (regime_summaries(windows) - scaler_mean) / scaler_scale
+    d = ((Z[:, None, :] - centroids[None, :, :]) ** 2).sum(-1)
+    return d.argmin(1)
+
+
+def split_regimes(labels, min_size=80, n_val=1, n_test=2, seed=42):
+    """Regimes with at least `min_size` normal windows are kept and shuffled with a fixed
+    seed; the last `n_test` become meta-test, the `n_val` before them meta-validation."""
+    ids, counts = np.unique(labels, return_counts=True)
+    sizes = {int(i): int(c) for i, c in zip(ids, counts)}
+    kept = sorted(i for i, c in sizes.items() if c >= min_size)
+    order = list(np.random.RandomState(seed).permutation(kept))
+    return {"meta_train": [int(i) for i in order[:len(order) - n_val - n_test]],
+            "meta_val": [int(i) for i in order[len(order) - n_val - n_test:len(order) - n_test]],
+            "meta_test": [int(i) for i in order[len(order) - n_test:]],
+            "sizes": sizes, "dropped_small": [i for i in sizes if i not in kept], "min_size": min_size}
+
+
+# ---------------------------------------------------------------------------
+# Common low-dimensional space for cross-plant transfer
+# ---------------------------------------------------------------------------
+def fit_projection(rows_unscaled, n_components=32, seed=42):
+    """MinMax scaling, then PCA to `n_components`, then min-max of the projection, all
+    fitted on `rows_unscaled` (timesteps x sensors). For the source plant these rows are
+    its full normal data; for the target plant, in the leak-free setting, they are only
+    the K support windows' rows."""
+    from sklearn.decomposition import PCA
+    mm = MinMaxScaler().fit(rows_unscaled)
+    pca = PCA(n_components=n_components, random_state=seed).fit(mm.transform(rows_unscaled))
+    P = pca.transform(mm.transform(rows_unscaled))
+    lo, hi = P.min(0), P.max(0)
+    return {"minmax": mm, "pca": pca, "lo": lo, "range": np.where(hi - lo > 1e-8, hi - lo, 1.0),
+            "explained_variance": float(pca.explained_variance_ratio_.sum()),
+            "explained_variance_ratio": pca.explained_variance_ratio_, "n_rows": len(rows_unscaled)}
+
+
+def apply_projection(proj, rows_unscaled):
+    P = proj["pca"].transform(proj["minmax"].transform(rows_unscaled))
+    return np.clip((P - proj["lo"]) / proj["range"], 0, 1).astype(np.float32)
+
+
+def project_windows(proj, windows_unscaled):
+    n, T, F = windows_unscaled.shape
+    return apply_projection(proj, windows_unscaled.reshape(n * T, F)).reshape(n, T, -1)
+
+
+def train_on_support(model, support, device, *, seed, steps=300, lr=1e-3):
+    """'Scratch': a fresh model trained only on the K support windows, full batch, Adam,
+    a fixed number of steps (no validation data exists in this setting)."""
+    seed_everything(seed)
+    s = to_tensor(support, device)
+    opt = torch.optim.Adam(model.parameters(), lr=lr)
+    model.train()
+    for _ in range(steps):
+        opt.zero_grad(); _mse(model(s), s).backward(); opt.step()
+    return model
+
+
+# ---------------------------------------------------------------------------
+# Statistics across training seeds
+# ---------------------------------------------------------------------------
+def describe_values(xs):
+    """Mean, sample SD and t-based 95% confidence interval of per-seed values."""
+    from scipy import stats as st
+    xs = np.array([x for x in xs if x is not None], dtype=float)
+    out = {"n": int(len(xs)), "mean": float(xs.mean()) if len(xs) else None}
+    if len(xs) > 1:
+        sd = xs.std(ddof=1)
+        h = st.t.ppf(0.975, len(xs) - 1) * sd / np.sqrt(len(xs))
+        out.update(sd=float(sd), ci95=[float(xs.mean() - h), float(xs.mean() + h)])
+    return out
+
+
+def paired_comparison(a, b, margin=0.02):
+    """Paired differences a - b over training seeds: mean, 95% CI, two-sided t-test and
+    Wilcoxon p-values, and a TOST equivalence p-value for the band [-margin, +margin]
+    (p < 0.05 means the difference is shown to lie inside the band)."""
+    from scipy import stats as st
+    d = np.array([x - y for x, y in zip(a, b) if x is not None and y is not None], dtype=float)
+    out = describe_values(d)
+    out["margin"] = margin
+    if len(d) > 1:
+        out["t_test_p_two_sided"] = float(st.ttest_1samp(d, 0.0).pvalue)
+        try:
+            out["wilcoxon_p_two_sided"] = float(st.wilcoxon(d).pvalue)
+        except ValueError:
+            out["wilcoxon_p_two_sided"] = None
+        se = d.std(ddof=1) / np.sqrt(len(d))
+        if se > 0:
+            p_low = 1 - st.t.cdf((d.mean() + margin) / se, len(d) - 1)
+            p_high = st.t.cdf((d.mean() - margin) / se, len(d) - 1)
+            out["tost_p"] = float(max(p_low, p_high))
+        out["ci_excludes_zero"] = bool(out["ci95"][0] > 0 or out["ci95"][1] < 0)
+    return out
+
+
+def load_plant(plant, extra_roots=()):
+    """Everything Notebook_03 saved for one plant, turned back into windows and regimes."""
+    roots = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs"),
+             *data_roots(extra_roots)]
+    f_clean = find_file(f"{plant}_clean.npz", roots)
+    f_reg = find_file(f"{plant}_regimes.npz", roots)
+    f_sum = find_file("plant_data_summary.json", roots)
+    if not (f_clean and f_reg and f_sum):
+        raise FileNotFoundError(f"run Notebook_03 first (or attach its output): {plant}_clean.npz, "
+                                f"{plant}_regimes.npz and plant_data_summary.json are needed")
+    d = dict(np.load(f_clean, allow_pickle=False))
+    r = dict(np.load(f_reg, allow_pickle=False))
+    split = json.load(open(f_sum))[plant]["regimes"]["split"]
+    Wn, n_starts = windows_with_labels(d["normal_scaled"])
+    Wa, a_starts, y_any, y_half = windows_with_labels(d["attack_scaled"], d["attack_labels"])
+    Wn_u, _ = windows_with_labels(d["normal_unscaled"])
+    Wa_u, _ = windows_with_labels(d["attack_unscaled"])
+    assert len(Wn) == len(r["normal_regime"]) and len(Wa) == len(r["attack_regime"])
+    return {"plant": plant, "normal": Wn, "attack": Wa, "any": y_any, "half": y_half,
+            "normal_unscaled": Wn_u, "attack_unscaled": Wa_u,
+            "normal_rows_unscaled": d["normal_unscaled"],
+            "normal_regime": r["normal_regime"], "attack_regime": r["attack_regime"],
+            "split": {k: split[k] for k in ["meta_train", "meta_val", "meta_test"]},
+            "files": [f_clean, f_reg, f_sum]}

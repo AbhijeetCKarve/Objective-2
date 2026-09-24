@@ -1,4 +1,4 @@
-"""Unit tests for smap_common. Run with:  python -m pytest corrected_legacy/tests -q"""
+"""Unit tests for maml_common. Run with:  python -m pytest Corrected-Notebooks/tests -q"""
 import copy
 import os
 import sys
@@ -8,7 +8,7 @@ import pytest
 import torch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-import smap_common as sc  # noqa: E402
+import maml_common as sc  # noqa: E402
 
 
 def _episodes(n=4, d=25, seed=0):
@@ -150,3 +150,68 @@ def test_train_conventional_lowers_loss():
     m, info = sc.train_conventional(sc.LSTMAutoencoder(3), pool, "cpu", seed=1, max_epochs=5,
                                     patience=5, log=lambda *_: None)
     assert info["val_history"][-1] <= info["val_history"][0]
+
+
+# ----------------------------- SWaT / WADI helpers -----------------------------
+def test_swat_label_variants_are_all_counted():
+    raw = ["Normal", "Attack", "A ttack", " Normal", "Attack"]
+    mask, variants = sc.swat_attack_mask(raw)
+    assert mask.tolist() == [False, True, True, False, True]
+    assert variants["A ttack"] == 1
+    with pytest.raises(AssertionError):
+        sc.swat_attack_mask(["Normal", "Atack"])
+
+
+def test_downsampling_rules():
+    x = np.arange(25).reshape(25, 1)
+    assert sc.downsample_values(x).ravel().tolist() == [0, 10]
+    y = np.zeros(25, bool); y[13] = True
+    assert sc.downsample_labels_or(y).tolist() == [False, True]
+
+
+def test_window_labels_any_and_half():
+    X = np.zeros((60, 2), np.float32); y = np.zeros(60); y[25:40] = 1
+    W, starts, any_, half = sc.windows_with_labels(X, y, window=30, stride=10)
+    assert starts.tolist() == [0, 10, 20, 30]
+    assert any_.tolist() == [1, 1, 1, 1] and half.tolist() == [0, 1, 1, 0]   # 5/30, 15/30, 15/30, 10/30
+
+
+def test_regimes_fit_assign_and_split():
+    r = np.random.RandomState(0)
+    W = np.concatenate([r.rand(60, 30, 2) * a + c for c, a in ((0, .1), (5, 1), (10, 2), (15, 3))]).astype(np.float32)
+    fit = sc.fit_regimes(W, [4], n_init=3)
+    f = fit["fits"][4]
+    again = sc.assign_regimes(W, fit["scaler_mean"], fit["scaler_scale"], f["centroids"])
+    assert (again == f["labels"]).all()
+    groups = f["labels"].reshape(4, 60)
+    assert all(len(set(g)) == 1 for g in groups) and len(set(groups[:, 0])) == 4
+    sp = sc.split_regimes(f["labels"], min_size=10)
+    assert len(sp["meta_train"]) == 1 and len(sp["meta_val"]) == 1 and len(sp["meta_test"]) == 2
+
+
+def test_projection_fitted_on_support_only():
+    r = np.random.RandomState(0)
+    support_rows = r.rand(600, 51).astype(np.float32)
+    proj = sc.fit_projection(support_rows, n_components=32)
+    assert proj["n_rows"] == 600
+    out = sc.apply_projection(proj, r.rand(100, 51).astype(np.float32) * 3)
+    assert out.shape == (100, 32) and out.min() >= 0 and out.max() <= 1
+
+
+def test_early_stopping_stops(monkeypatch):
+    tasks = _toy_tasks()
+    val = sc.fixed_episodes({"v": _toy_tasks(1)["t0"]}, 1, seed=3)
+    monkeypatch.setattr(sc, "meta_validation_loss", lambda *a, **k: 1.0)   # never improves
+    torch.manual_seed(0)
+    _, info = sc.train_maml(sc.LSTMAutoencoder(3), tasks, val, "cpu", seed=1, n_outer=200,
+                            val_every=1, inner_steps=1, support_size=5, query_size=5,
+                            tasks_per_batch=2, patience=2, log=lambda *_: None)
+    assert info["stopped_early"] and info["steps_reached"] == 3 and info["best_step"] == 1
+
+
+def test_paired_comparison_and_tost():
+    a = [0.80, 0.81, 0.79, 0.80, 0.805]
+    r = sc.paired_comparison(a, [x - d for x, d in zip(a, [0.001, 0.002, 0.0, 0.001, 0.001])], margin=0.02)
+    assert r["tost_p"] < 0.05 and abs(r["mean"] - 0.001) < 1e-9
+    r = sc.paired_comparison([0.9, 0.91, 0.92], [0.8, 0.8, 0.81], margin=0.02)
+    assert r["ci_excludes_zero"] and r["tost_p"] > 0.05
