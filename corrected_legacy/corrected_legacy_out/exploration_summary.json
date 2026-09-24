@@ -1,0 +1,63 @@
+{
+  "csv_rows": 82,
+  "unique_channels": 81,
+  "unique_smap_channels": 54,
+  "duplicate_rows": [
+    "P-2",
+    "P-2"
+  ],
+  "value_range_all_channels": [
+    -1.47721668720188,
+    258.1081081081054
+  ],
+  "channels_outside_0_1": 81,
+  "smap_pooled_anomaly_fraction": 0.1284273999256584,
+  "smap_mean_channel_anomaly_fraction": 0.12435895360575765,
+  "eval_channels": {
+    "E-3": {
+      "test_fraction": 0.38678223185265437,
+      "anomaly_reaches_end": true,
+      "normal_windows_stride10": 286
+    },
+    "D-7": {
+      "test_fraction": 0.35357236325569225,
+      "anomaly_reaches_end": true,
+      "normal_windows_stride10": 256
+    },
+    "E-6": {
+      "test_fraction": 0.007951807228915662,
+      "anomaly_reaches_end": false,
+      "normal_windows_stride10": 286
+    },
+    "D-6": {
+      "test_fraction": 0.010273972602739725,
+      "anomaly_reaches_end": false,
+      "normal_windows_stride10": 257
+    },
+    "T-2": {
+      "test_fraction": 0.20695652173913043,
+      "anomaly_reaches_end": true,
+      "normal_windows_stride10": 283
+    },
+    "A-6": {
+      "test_fraction": 0.009207275993712105,
+      "anomaly_reaches_end": false,
+      "normal_windows_stride10": 66
+    },
+    "D-3": {
+      "test_fraction": 0.37916666666666665,
+      "anomaly_reaches_end": false,
+      "normal_windows_stride10": 286
+    },
+    "P-4": {
+      "test_fraction": 0.0569189258640627,
+      "anomaly_reaches_end": false,
+      "normal_windows_stride10": 258
+    }
+  },
+  "smap_channels_under_40_normal_windows": [
+    "D-12"
+  ],
+  "git_commit": "949e48b0f51a13289cdd327f73a3a76ac46d4ef5",
+  "timestamp": "2026-09-24T05:18:25"
+}

@@ -1,0 +1,721 @@
+{
+  "description": "Audit of the original SMAP evaluation (06_smap_maml_clean). CPU run.",
+  "checkpoints": {
+    "maml": "smap_maml_best.pt (step 18000)",
+    "static": "smap_static_ae.pt"
+  },
+  "reproduction_macro": {
+    "1": {
+      "MAML-AE": {
+        "auroc": 0.4875457142857143,
+        "f1": 0.31625142857142857
+      },
+      "Static-AE": {
+        "auroc": 0.4500685714285714,
+        "f1": 0.27922857142857144
+      },
+      "MLP-AE": {
+        "auroc": 0.5856771428571429,
+        "f1": 0.3905714285714285
+      },
+      "Isolation-Forest": {
+        "auroc": 0.5,
+        "f1": 0.0
+      }
+    },
+    "5": {
+      "MAML-AE": {
+        "auroc": 0.47462285714285724,
+        "f1": 0.15233142857142853
+      },
+      "Static-AE": {
+        "auroc": 0.4529342857142857,
+        "f1": 0.13355142857142857
+      },
+      "MLP-AE": {
+        "auroc": 0.5858342857142856,
+        "f1": 0.17198571428571427
+      },
+      "Isolation-Forest": {
+        "auroc": 0.5902000000000001,
+        "f1": 0.16085714285714284
+      }
+    },
+    "10": {
+      "MAML-AE": {
+        "auroc": 0.47979142857142854,
+        "f1": 0.10666
+      },
+      "Static-AE": {
+        "auroc": 0.45707428571428566,
+        "f1": 0.10179714285714285
+      },
+      "MLP-AE": {
+        "auroc": 0.5894828571428572,
+        "f1": 0.1449342857142857
+      },
+      "Isolation-Forest": {
+        "auroc": 0.6071914285714286,
+        "f1": 0.26533428571428574
+      }
+    }
+  },
+  "reproduction_per_channel": {
+    "E-3": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.21962,
+          "auroc": 0.16158
+        },
+        "Static-AE": {
+          "f1": 0.17492000000000002,
+          "auroc": 0.19246
+        },
+        "MLP-AE": {
+          "f1": 0.24982,
+          "auroc": 0.28152
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.09464,
+          "auroc": 0.14892
+        },
+        "Static-AE": {
+          "f1": 0.08836,
+          "auroc": 0.19046000000000002
+        },
+        "MLP-AE": {
+          "f1": 0.04532,
+          "auroc": 0.28208
+        },
+        "Isolation-Forest": {
+          "f1": 0.035160000000000004,
+          "auroc": 0.42303999999999997
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.08157999999999999,
+          "auroc": 0.1502
+        },
+        "Static-AE": {
+          "f1": 0.07886,
+          "auroc": 0.19236
+        },
+        "MLP-AE": {
+          "f1": 0.05978,
+          "auroc": 0.28314
+        },
+        "Isolation-Forest": {
+          "f1": 0.18775999999999998,
+          "auroc": 0.43520000000000003
+        }
+      }
+    },
+    "D-7": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.6234599999999999,
+          "auroc": 0.5716600000000001
+        },
+        "Static-AE": {
+          "f1": 0.59794,
+          "auroc": 0.55474
+        },
+        "MLP-AE": {
+          "f1": 0.80826,
+          "auroc": 0.76924
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.28243999999999997,
+          "auroc": 0.58848
+        },
+        "Static-AE": {
+          "f1": 0.26006000000000007,
+          "auroc": 0.58136
+        },
+        "MLP-AE": {
+          "f1": 0.403,
+          "auroc": 0.7703
+        },
+        "Isolation-Forest": {
+          "f1": 0.13283999999999999,
+          "auroc": 0.51038
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.10868,
+          "auroc": 0.6014000000000002
+        },
+        "Static-AE": {
+          "f1": 0.08678,
+          "auroc": 0.5925600000000001
+        },
+        "MLP-AE": {
+          "f1": 0.37064,
+          "auroc": 0.77778
+        },
+        "Isolation-Forest": {
+          "f1": 0.15494,
+          "auroc": 0.51158
+        }
+      }
+    },
+    "E-6": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.26708000000000004,
+          "auroc": 0.44401999999999997
+        },
+        "Static-AE": {
+          "f1": 0.22038000000000002,
+          "auroc": 0.34513999999999995
+        },
+        "MLP-AE": {
+          "f1": 0.22902,
+          "auroc": 0.53872
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.27205999999999997,
+          "auroc": 0.36672000000000005
+        },
+        "Static-AE": {
+          "f1": 0.32492,
+          "auroc": 0.34556
+        },
+        "MLP-AE": {
+          "f1": 0.1537,
+          "auroc": 0.53544
+        },
+        "Isolation-Forest": {
+          "f1": 0.02318,
+          "auroc": 0.6140800000000001
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.25446,
+          "auroc": 0.36644
+        },
+        "Static-AE": {
+          "f1": 0.29512,
+          "auroc": 0.34658
+        },
+        "MLP-AE": {
+          "f1": 0.1537,
+          "auroc": 0.53884
+        },
+        "Isolation-Forest": {
+          "f1": 0.08204,
+          "auroc": 0.5705600000000001
+        }
+      }
+    },
+    "D-6": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.24018,
+          "auroc": 0.6090599999999999
+        },
+        "Static-AE": {
+          "f1": 0.22152,
+          "auroc": 0.61566
+        },
+        "MLP-AE": {
+          "f1": 0.16444,
+          "auroc": 0.6190399999999999
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.09444,
+          "auroc": 0.58034
+        },
+        "Static-AE": {
+          "f1": 0.09416,
+          "auroc": 0.5924799999999999
+        },
+        "MLP-AE": {
+          "f1": 0.04848,
+          "auroc": 0.61894
+        },
+        "Isolation-Forest": {
+          "f1": 0.2022,
+          "auroc": 0.82332
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.05576,
+          "auroc": 0.58318
+        },
+        "Static-AE": {
+          "f1": 0.08234,
+          "auroc": 0.58682
+        },
+        "MLP-AE": {
+          "f1": 0.036359999999999996,
+          "auroc": 0.618
+        },
+        "Isolation-Forest": {
+          "f1": 0.36068,
+          "auroc": 0.78698
+        }
+      }
+    },
+    "T-2": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.29775999999999997,
+          "auroc": 0.39858
+        },
+        "Static-AE": {
+          "f1": 0.19114,
+          "auroc": 0.37728
+        },
+        "MLP-AE": {
+          "f1": 0.5281,
+          "auroc": 0.42112
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.0487,
+          "auroc": 0.39936
+        },
+        "Static-AE": {
+          "f1": 0.0,
+          "auroc": 0.37978
+        },
+        "MLP-AE": {
+          "f1": 0.12946,
+          "auroc": 0.42118
+        },
+        "Isolation-Forest": {
+          "f1": 0.26821999999999996,
+          "auroc": 0.48095999999999994
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.01254,
+          "auroc": 0.39812000000000003
+        },
+        "Static-AE": {
+          "f1": 0.0,
+          "auroc": 0.383
+        },
+        "MLP-AE": {
+          "f1": 0.0,
+          "auroc": 0.42367999999999995
+        },
+        "Isolation-Forest": {
+          "f1": 0.34292,
+          "auroc": 0.44883999999999996
+        }
+      }
+    },
+    "A-6": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.22035999999999997,
+          "auroc": 0.6403399999999999
+        },
+        "Static-AE": {
+          "f1": 0.24226,
+          "auroc": 0.57092
+        },
+        "MLP-AE": {
+          "f1": 0.3,
+          "auroc": 0.68514
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.0,
+          "auroc": 0.64482
+        },
+        "Static-AE": {
+          "f1": 0.0,
+          "auroc": 0.57958
+        },
+        "MLP-AE": {
+          "f1": 0.07156,
+          "auroc": 0.69106
+        },
+        "Isolation-Forest": {
+          "f1": 0.36814,
+          "auroc": 0.7666600000000001
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.0,
+          "auroc": 0.6563399999999999
+        },
+        "Static-AE": {
+          "f1": 0.0,
+          "auroc": 0.5900799999999999
+        },
+        "MLP-AE": {
+          "f1": 0.0,
+          "auroc": 0.7020000000000001
+        },
+        "Isolation-Forest": {
+          "f1": 0.44532000000000005,
+          "auroc": 0.89724
+        }
+      }
+    },
+    "D-3": {
+      "1": {
+        "MAML-AE": {
+          "f1": 0.34530000000000005,
+          "auroc": 0.58758
+        },
+        "Static-AE": {
+          "f1": 0.30644,
+          "auroc": 0.49428
+        },
+        "MLP-AE": {
+          "f1": 0.45436,
+          "auroc": 0.7849599999999999
+        },
+        "Isolation-Forest": {
+          "f1": 0.0,
+          "auroc": 0.5
+        }
+      },
+      "5": {
+        "MAML-AE": {
+          "f1": 0.27403999999999995,
+          "auroc": 0.59372
+        },
+        "Static-AE": {
+          "f1": 0.16736,
+          "auroc": 0.50132
+        },
+        "MLP-AE": {
+          "f1": 0.35238,
+          "auroc": 0.78184
+        },
+        "Isolation-Forest": {
+          "f1": 0.09626000000000001,
+          "auroc": 0.51296
+        }
+      },
+      "10": {
+        "MAML-AE": {
+          "f1": 0.23359999999999997,
+          "auroc": 0.60286
+        },
+        "Static-AE": {
+          "f1": 0.16948,
+          "auroc": 0.5081199999999999
+        },
+        "MLP-AE": {
+          "f1": 0.39406,
+          "auroc": 0.7829400000000001
+        },
+        "Isolation-Forest": {
+          "f1": 0.28368000000000004,
+          "auroc": 0.5999399999999999
+        }
+      }
+    }
+  },
+  "manuscript_version_b": {
+    "1": {
+      "MAML-AE": [
+        0.487,
+        0.316
+      ],
+      "Static-AE": [
+        0.45,
+        0.279
+      ],
+      "MLP-AE": [
+        0.586,
+        0.391
+      ],
+      "Isolation-Forest": [
+        0.5,
+        0.0
+      ]
+    },
+    "5": {
+      "MAML-AE": [
+        0.475,
+        0.152
+      ],
+      "Static-AE": [
+        0.453,
+        0.134
+      ],
+      "MLP-AE": [
+        0.586,
+        0.172
+      ],
+      "Isolation-Forest": [
+        0.59,
+        0.161
+      ]
+    },
+    "10": {
+      "MAML-AE": [
+        0.48,
+        0.107
+      ],
+      "Static-AE": [
+        0.457,
+        0.102
+      ],
+      "MLP-AE": [
+        0.589,
+        0.145
+      ],
+      "Isolation-Forest": [
+        0.607,
+        0.265
+      ]
+    }
+  },
+  "query_set_properties": {
+    "E-3": {
+      "n_normal_windows_train_file": 286,
+      "n_legacy_anomaly_windows": 637,
+      "test_point_prevalence": 0.38678223185265437,
+      "k1": {
+        "query_anomaly_fraction": 0.864314789687924,
+        "trivial_flag_all_f1": 0.9272197962154294,
+        "normal_query_windows_overlapping_support": 0.01
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.864314789687924,
+        "trivial_flag_all_f1": 0.9272197962154294,
+        "normal_query_windows_overlapping_support": 0.06999999999999999
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.864314789687924,
+        "trivial_flag_all_f1": 0.9272197962154294,
+        "normal_query_windows_overlapping_support": 0.124
+      }
+    },
+    "D-7": {
+      "n_normal_windows_train_file": 256,
+      "n_legacy_anomaly_windows": 535,
+      "test_point_prevalence": 0.35357236325569225,
+      "k1": {
+        "query_anomaly_fraction": 0.84251968503937,
+        "trivial_flag_all_f1": 0.9145299145299145,
+        "normal_query_windows_overlapping_support": 0.022
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.84251968503937,
+        "trivial_flag_all_f1": 0.9145299145299145,
+        "normal_query_windows_overlapping_support": 0.074
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.84251968503937,
+        "trivial_flag_all_f1": 0.9145299145299145,
+        "normal_query_windows_overlapping_support": 0.142
+      }
+    },
+    "E-6": {
+      "n_normal_windows_train_file": 286,
+      "n_legacy_anomaly_windows": 14,
+      "test_point_prevalence": 0.007951807228915662,
+      "k1": {
+        "query_anomaly_fraction": 0.12280701754385963,
+        "trivial_flag_all_f1": 0.21874999999999997,
+        "normal_query_windows_overlapping_support": 0.01
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.12280701754385963,
+        "trivial_flag_all_f1": 0.21874999999999997,
+        "normal_query_windows_overlapping_support": 0.06999999999999999
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.12280701754385963,
+        "trivial_flag_all_f1": 0.21874999999999997,
+        "normal_query_windows_overlapping_support": 0.124
+      }
+    },
+    "D-6": {
+      "n_normal_windows_train_file": 257,
+      "n_legacy_anomaly_windows": 17,
+      "test_point_prevalence": 0.010273972602739725,
+      "k1": {
+        "query_anomaly_fraction": 0.1452991452991453,
+        "trivial_flag_all_f1": 0.2537313432835821,
+        "normal_query_windows_overlapping_support": 0.02
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.1452991452991453,
+        "trivial_flag_all_f1": 0.2537313432835821,
+        "normal_query_windows_overlapping_support": 0.074
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.1452991452991453,
+        "trivial_flag_all_f1": 0.2537313432835821,
+        "normal_query_windows_overlapping_support": 0.134
+      }
+    },
+    "T-2": {
+      "n_normal_windows_train_file": 283,
+      "n_legacy_anomaly_windows": 352,
+      "test_point_prevalence": 0.20695652173913043,
+      "k1": {
+        "query_anomaly_fraction": 0.7787610619469026,
+        "trivial_flag_all_f1": 0.8756218905472637,
+        "normal_query_windows_overlapping_support": 0.01
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.7787610619469026,
+        "trivial_flag_all_f1": 0.8756218905472637,
+        "normal_query_windows_overlapping_support": 0.07999999999999999
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.7787610619469026,
+        "trivial_flag_all_f1": 0.8756218905472637,
+        "normal_query_windows_overlapping_support": 0.146
+      }
+    },
+    "A-6": {
+      "n_normal_windows_train_file": 66,
+      "n_legacy_anomaly_windows": 9,
+      "test_point_prevalence": 0.009207275993712105,
+      "k1": {
+        "query_anomaly_fraction": 0.12162162162162163,
+        "trivial_flag_all_f1": 0.21686746987951808,
+        "normal_query_windows_overlapping_support": 0.06153846153846154
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.12857142857142856,
+        "trivial_flag_all_f1": 0.22784810126582278,
+        "normal_query_windows_overlapping_support": 0.25901639344262295
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.13846153846153847,
+        "trivial_flag_all_f1": 0.24324324324324326,
+        "normal_query_windows_overlapping_support": 0.47857142857142854
+      }
+    },
+    "D-3": {
+      "n_normal_windows_train_file": 286,
+      "n_legacy_anomaly_windows": 656,
+      "test_point_prevalence": 0.37916666666666665,
+      "k1": {
+        "query_anomaly_fraction": 0.8677248677248677,
+        "trivial_flag_all_f1": 0.9291784702549575,
+        "normal_query_windows_overlapping_support": 0.01
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.8677248677248677,
+        "trivial_flag_all_f1": 0.9291784702549575,
+        "normal_query_windows_overlapping_support": 0.06999999999999999
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.8677248677248677,
+        "trivial_flag_all_f1": 0.9291784702549575,
+        "normal_query_windows_overlapping_support": 0.124
+      }
+    },
+    "P-4": {
+      "n_normal_windows_train_file": 258,
+      "n_legacy_anomaly_windows": 91,
+      "test_point_prevalence": 0.0569189258640627,
+      "k1": {
+        "query_anomaly_fraction": 0.47643979057591623,
+        "trivial_flag_all_f1": 0.6453900709219857,
+        "normal_query_windows_overlapping_support": 0.022
+      },
+      "k5": {
+        "query_anomaly_fraction": 0.47643979057591623,
+        "trivial_flag_all_f1": 0.6453900709219857,
+        "normal_query_windows_overlapping_support": 0.068
+      },
+      "k10": {
+        "query_anomaly_fraction": 0.47643979057591623,
+        "trivial_flag_all_f1": 0.6453900709219857,
+        "normal_query_windows_overlapping_support": 0.134
+      }
+    }
+  },
+  "random_model_and_model_free": {
+    "E-3": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.2631083202511774,
+      "legacy_window_auroc_window_mean_value": 0.26153846153846155,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.09439004847674794
+    },
+    "D-7": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.7268598130841122,
+      "legacy_window_auroc_window_mean_value": 0.792177570093458,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.7658897892399392
+    },
+    "E-6": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.31,
+      "legacy_window_auroc_window_mean_value": 0.5842857142857143,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.643157344639006
+    },
+    "D-6": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.6517647058823529,
+      "legacy_window_auroc_window_mean_value": 0.49117647058823527,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.79333526358175
+    },
+    "T-2": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.43792613636363636,
+      "legacy_window_auroc_window_mean_value": 0.4393465909090909,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.6101261323242747
+    },
+    "A-6": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.6388888888888888,
+      "legacy_window_auroc_window_mean_value": 0.7043650793650793,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.9998452115074188
+    },
+    "D-3": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.7672560975609756,
+      "legacy_window_auroc_window_mean_value": 0.7509298780487805,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.7607639144971361
+    },
+    "P-4": {
+      "legacy_window_auroc_random_untrained_lstm_ae": 0.21972527472527473,
+      "legacy_window_auroc_window_mean_value": 0.2206593406593407,
+      "pointwise_auroc_random_untrained_lstm_ae": 0.7441404592172517
+    }
+  },
+  "torch": "2.14.0+cu130",
+  "device": "cpu",
+  "git_commit": "949e48b0f51a13289cdd327f73a3a76ac46d4ef5",
+  "timestamp": "2026-09-24T05:10:14"
+}

@@ -1,0 +1,4 @@
+A 04 learn2learn (uploaded)        params with non-zero grad: 20/20 | meta-param change L2: 2.539e-01
+B 04-maml-training(3) Kaggle       params with non-zero grad: 0/20 | meta-param change L2: 0.000e+00
+C 06 corrected FOMAML              params with non-zero grad: 20/20 | meta-param change L2: 2.544e-01
+D max relative difference between A and C meta-gradients: 1.03e-07

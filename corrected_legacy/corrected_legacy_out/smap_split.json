@@ -1,0 +1,80 @@
+{
+  "meta_train": [
+    "P-3",
+    "A-9",
+    "G-2",
+    "G-7",
+    "E-5",
+    "S-1",
+    "T-3",
+    "G-4",
+    "E-10",
+    "B-1",
+    "D-13",
+    "E-1",
+    "A-7",
+    "A-2",
+    "T-1",
+    "G-6",
+    "A-4",
+    "D-9",
+    "D-4",
+    "P-1",
+    "P-2",
+    "D-2",
+    "F-1",
+    "E-11",
+    "P-7",
+    "E-9",
+    "E-2",
+    "E-4",
+    "G-3",
+    "F-3",
+    "E-13",
+    "A-3",
+    "R-1",
+    "F-2",
+    "D-8",
+    "A-5",
+    "A-1",
+    "D-1",
+    "E-8"
+  ],
+  "meta_val": [
+    "G-1",
+    "E-12",
+    "D-5",
+    "E-7",
+    "A-8",
+    "D-11"
+  ],
+  "meta_test": [
+    "E-3",
+    "D-7",
+    "E-6",
+    "D-12",
+    "D-6",
+    "T-2",
+    "A-6",
+    "D-3",
+    "P-4"
+  ],
+  "eval_channels": [
+    "E-3",
+    "D-7",
+    "E-6",
+    "D-6",
+    "T-2",
+    "A-6",
+    "D-3"
+  ],
+  "sensitivity_channels": [
+    "P-4"
+  ],
+  "excluded": {
+    "D-12": "only 312 training timesteps (29 normal windows at stride 10): too few to draw support sets and hold out normal data. Label-free reason.",
+    "P-4": "sensor-dropout (flat-line) anomaly that a reconstruction model cannot flag. This reason was found by inspecting the test anomalies in the original notebook 04, so the exclusion is post hoc. P-4 is still scored and reported separately as a sensitivity row."
+  },
+  "git_commit": "949e48b0f51a13289cdd327f73a3a76ac46d4ef5",
+  "timestamp": "2026-09-24T05:18:31"
+}
