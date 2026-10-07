@@ -1,0 +1,483 @@
+# ------------------------------------------------------------------
+#  EPISODE PLAN — the full ETCS302 Database Management System syllabus
+#  turned into short videos (about 6–12 minutes each).
+#
+#  Fields for each episode:
+#    id          unique code. Your Tella export must be saved as recordings/<id>.mp4
+#    unit        1–5, or "lab"
+#    title       shown on the title card, thumbnail and YouTube title
+#    scenes      Manim animations (class names in scenes/dbms_scenes.py)
+#    record      what to say / show when you record this episode in Tella
+#    key_points  3–4 one-line takeaways shown on the summary card
+#    music       optional: a track in assets/music that overrides the theme default
+#    segments    optional: list the segments yourself to change the order (see README, Step 7)
+#
+#  Default order when "segments" is not given:
+#    title card -> your Tella recording -> Manim scenes -> key takeaways -> end card
+# ------------------------------------------------------------------
+
+episodes:
+
+  # ============================ UNIT I ============================
+  - id: U1-01
+    unit: 1
+    title: "What is a Database System?"
+    scenes: []
+    record: >
+      Face-cam intro. Define data, database and DBMS. Purpose of a DBMS.
+      Show 4 real applications: banking, university ERP, e-commerce, hospital.
+      List the advantages (sharing, security, integrity, backup).
+    key_points:
+      - "A database is an organised collection of related data"
+      - "A DBMS is the software that stores, retrieves and protects it"
+      - "Used everywhere: banks, colleges, shops, hospitals"
+
+  - id: U1-02
+    unit: 1
+    title: "DBMS vs File Processing Systems"
+    scenes: [FileSystemVsDBMS]
+    record: >
+      Explain how a college kept student data in separate files per department.
+      Walk through the problems: redundancy, inconsistency, difficult access,
+      no concurrency control, weak security. Then show how a DBMS fixes each one.
+    key_points:
+      - "File systems duplicate data and let copies disagree"
+      - "A DBMS keeps one shared, consistent copy"
+      - "It adds concurrency control, security and recovery"
+
+  - id: U1-03
+    unit: 1
+    title: "Three-Schema Architecture & Data Independence"
+    scenes: [ThreeSchemaArchitecture]
+    record: >
+      Explain data abstraction with a car analogy (driver / mechanic / engineer view).
+      Describe the external, conceptual and internal levels.
+      Define logical and physical data independence with one example each.
+    key_points:
+      - "External level: what each user sees (views)"
+      - "Conceptual level: the whole logical design"
+      - "Internal level: how data sits on disk"
+      - "Independence = change one level without breaking the one above"
+
+  - id: U1-04
+    unit: 1
+    title: "Data Models: Hierarchical, Network, Relational, Object-Oriented"
+    scenes: [DataModels]
+    record: >
+      For each model draw the same tiny example (department–employee).
+      Mention where each is still used (IBM IMS, IDMS, MySQL/Oracle, db4o/ODBMS).
+    key_points:
+      - "Hierarchical = tree, one parent per child"
+      - "Network = graph, many parents allowed"
+      - "Relational = tables linked by keys (the one we study)"
+      - "Object-oriented = data + behaviour together"
+
+  - id: U1-05
+    unit: 1
+    title: "Inside a DBMS: Storage Manager & Query Processor"
+    scenes: [DBMSComponents]
+    record: >
+      Follow one SQL query from the user to the disk and back.
+      Name the parts: DDL interpreter, DML compiler, query optimiser, query evaluation engine,
+      buffer manager, file manager, transaction manager, authorisation manager.
+    key_points:
+      - "Query processor turns SQL into an efficient plan"
+      - "Storage manager reads and writes the actual data"
+      - "Buffer manager keeps hot pages in memory"
+
+  - id: U1-06
+    unit: 1
+    title: "Database Design Process & the ER Model"
+    scenes: [ERDiagramBasics]
+    record: >
+      Steps: requirements analysis -> conceptual design -> logical design -> physical design.
+      Introduce entities, attributes (simple, composite, multivalued, derived, key)
+      and relationships with cardinality. Use a University example.
+    key_points:
+      - "Rectangle = entity, ellipse = attribute, diamond = relationship"
+      - "Underlined attribute = primary key"
+      - "Cardinality: 1:1, 1:N, M:N"
+
+  - id: U1-07
+    unit: 1
+    title: "EER Diagrams: Specialization & Generalization"
+    scenes: [EERSpecialization]
+    record: >
+      Extend the University ER diagram: PERSON specialised into STUDENT and FACULTY.
+      Explain disjoint vs overlapping, total vs partial participation, and inheritance.
+    key_points:
+      - "Specialization: split a general entity into sub-types (top-down)"
+      - "Generalization: merge similar entities into a super-type (bottom-up)"
+      - "Sub-types inherit the super-type's attributes"
+
+  - id: U1-08
+    unit: 1
+    title: "Case Study: Converting ER/EER Diagrams into Tables"
+    scenes: [ERToTables]
+    record: >
+      Tella screen recording in ERDPlus or Lucidchart: design a Hospital or E-commerce ER diagram,
+      then convert it into tables step by step (strong entities, weak entities, 1:N, M:N, multivalued).
+    key_points:
+      - "Each strong entity becomes a table"
+      - "1:N: put the foreign key on the N side"
+      - "M:N: create a new table with both keys"
+
+  # ============================ UNIT II ============================
+  - id: U2-01
+    unit: 2
+    title: "The Relational Model & Integrity Constraints"
+    scenes: [RelationTerms]
+    record: >
+      Define relation, tuple, attribute, domain, degree and cardinality on a STUDENT table.
+      Explain domain constraints, key constraints (super, candidate, primary), entity integrity
+      and referential integrity (foreign keys).
+    key_points:
+      - "Relation = table, tuple = row, attribute = column"
+      - "Primary key: unique and never NULL"
+      - "Foreign key must match an existing primary key"
+
+  - id: U2-02
+    unit: 2
+    title: "Relational Algebra: Select, Project, Join"
+    scenes: [RelationalAlgebra]
+    record: >
+      Work through select (σ), project (π), rename (ρ), cartesian product (×) and join (⋈)
+      on the STUDENT and DEPT tables, writing the SQL equivalent next to each.
+    key_points:
+      - "σ picks rows, π picks columns"
+      - "⋈ combines tables on a matching attribute"
+      - "Every SQL query is relational algebra underneath"
+
+  - id: U2-03
+    unit: 2
+    title: "Relational Algebra: Set Operations"
+    scenes: [SetOperations]
+    record: >
+      Union, intersection and difference with two course-enrolment tables.
+      Explain union compatibility (same number and types of columns).
+    key_points:
+      - "∪ = in either, ∩ = in both, − = in first only"
+      - "Tables must be union-compatible"
+
+  - id: U2-04
+    unit: 2
+    title: "Functional & Multivalued Dependencies"
+    scenes: [FunctionalDependency]
+    record: >
+      Define X -> Y with examples. Armstrong's axioms (reflexivity, augmentation, transitivity).
+      Attribute closure to find candidate keys. Multivalued dependency X ->> Y with a
+      student–hobby–language example.
+    key_points:
+      - "X -> Y: same X always gives the same Y"
+      - "Closure X+ finds everything X determines"
+      - "MVD: independent multi-valued facts in one table"
+
+  - id: U2-05
+    unit: 2
+    title: "Normalization: 1NF, 2NF, 3NF"
+    scenes: [Normalization]
+    record: >
+      Take one messy order table. Remove repeating groups (1NF), remove partial dependencies (2NF),
+      remove transitive dependencies (3NF). Show insert / update / delete anomalies disappearing.
+    key_points:
+      - "1NF: atomic values only"
+      - "2NF: no partial dependency on part of a key"
+      - "3NF: no transitive dependency through a non-key"
+
+  - id: U2-06
+    unit: 2
+    title: "BCNF & Case Study: Normalizing Our Tables"
+    scenes: []
+    record: >
+      Define BCNF (every determinant is a candidate key). Show a 3NF-but-not-BCNF example.
+      Then normalise the tables created from the Unit I ER case study up to BCNF.
+    key_points:
+      - "BCNF: every determinant must be a candidate key"
+      - "BCNF is stricter than 3NF"
+      - "Decompose without losing data (lossless join)"
+
+  # ============================ UNIT III ============================
+  - id: U3-01
+    unit: 3
+    title: "Introduction to SQL: Data Types and Command Families"
+    scenes: [SQLCommandFamilies]
+    record: >
+      Characteristics and advantages of SQL. Data types (INT, DECIMAL, VARCHAR, DATE…) and literals.
+      Explain DDL, DML, DCL and TCL with one command each, live in MySQL Workbench.
+    key_points:
+      - "DDL defines structure, DML changes data"
+      - "DCL controls access, TCL controls transactions"
+
+  - id: U3-02
+    unit: 3
+    title: "Creating and Modifying Tables (DDL)"
+    scenes: []
+    record: >
+      Screen recording in MySQL: CREATE TABLE with PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL,
+      DEFAULT and CHECK. ALTER, DROP, TRUNCATE, RENAME. Index and sequence (AUTO_INCREMENT).
+    key_points:
+      - "Constraints protect data at the database level"
+      - "ALTER changes structure without losing rows"
+      - "Indexes speed up searches on large tables"
+
+  - id: U3-03
+    unit: 3
+    title: "SELECT and its Clauses"
+    scenes: [SQLQueryOrder]
+    record: >
+      INSERT, UPDATE, DELETE, then SELECT with WHERE, BETWEEN, IN, LIKE, IS NULL,
+      ORDER BY, LIMIT and tuple variables (aliases).
+    key_points:
+      - "SQL runs FROM first, SELECT near the end"
+      - "WHERE filters rows, ORDER BY sorts them"
+
+  - id: U3-04
+    unit: 3
+    title: "Joins, Set Membership & Set Comparison"
+    scenes: [SQLJoins]
+    record: >
+      INNER, LEFT, RIGHT and FULL joins on Customers and Orders.
+      Set operations (UNION, INTERSECT, EXCEPT), IN / NOT IN, ANY / ALL, EXISTS.
+    key_points:
+      - "INNER: matches only"
+      - "LEFT / RIGHT: keep all rows from one side"
+      - "IN, ANY, ALL, EXISTS compare against a set"
+
+  - id: U3-05
+    unit: 3
+    title: "Aggregate Functions, GROUP BY & HAVING"
+    scenes: []
+    record: >
+      COUNT, SUM, AVG, MIN, MAX. GROUP BY department, HAVING to filter groups.
+      Common string, date and numeric SQL functions.
+    key_points:
+      - "Aggregates turn many rows into one value"
+      - "WHERE filters rows, HAVING filters groups"
+
+  - id: U3-06
+    unit: 3
+    title: "Nested Queries, Views, Indexes & Sequences"
+    scenes: []
+    record: >
+      Subqueries and correlated subqueries (employees earning above their department average).
+      CREATE / DROP / UPDATE views. When to create an index.
+    key_points:
+      - "A subquery is a query inside another query"
+      - "Correlated subqueries run once per outer row"
+      - "A view is a saved query that looks like a table"
+
+  - id: U3-07
+    unit: 3
+    title: "PL/SQL: Stored Procedures & Functions"
+    scenes: []
+    record: >
+      Procedure with IN and OUT parameters (total sales of a product). Procedure with IF / CASE
+      (salary grades). Function that checks even or odd.
+    key_points:
+      - "Procedures perform tasks; functions return a value"
+      - "IN passes data in, OUT passes results back"
+
+  - id: U3-08
+    unit: 3
+    title: "Cursors, Triggers, Assertions, Roles & Privileges"
+    scenes: [TriggerFlow]
+    record: >
+      AFTER DELETE audit trigger, AFTER INSERT stock-update trigger, BEFORE UPDATE validation trigger.
+      A cursor that loops over Sales. GRANT / REVOKE and roles.
+    key_points:
+      - "Triggers run automatically on INSERT / UPDATE / DELETE"
+      - "Cursors process a result one row at a time"
+      - "GRANT and REVOKE control who can do what"
+
+  # ============================ UNIT IV ============================
+  - id: U4-01
+    unit: 4
+    title: "Transactions and the ACID Properties"
+    scenes: [ACIDProperties]
+    record: >
+      A bank transfer of 500 from A to B as the running example. What goes wrong without each property.
+    key_points:
+      - "Atomicity: all or nothing"
+      - "Consistency: rules always hold"
+      - "Isolation: transactions don't see each other's half-work"
+      - "Durability: committed means saved for good"
+
+  - id: U4-02
+    unit: 4
+    title: "Transaction States and Schedules"
+    scenes: [TransactionStates]
+    record: >
+      Walk through the state diagram. Define a schedule, serial vs concurrent schedules,
+      with a timeline of T1 and T2 operations.
+    key_points:
+      - "Active -> Partially committed -> Committed"
+      - "Any failure goes to Failed -> Aborted"
+      - "A schedule is the order operations actually run"
+
+  - id: U4-03
+    unit: 4
+    title: "Serializability: Conflict and View"
+    scenes: [PrecedenceGraph]
+    record: >
+      Conflicting operations (read-write, write-read, write-write on the same item).
+      Build a precedence graph; cycle = not conflict-serializable. Then view serializability.
+    key_points:
+      - "Two operations conflict if same item, different transactions, at least one write"
+      - "No cycle in the precedence graph = conflict-serializable"
+
+  - id: U4-04
+    unit: 4
+    title: "Concurrency Control: Locking & Timestamp Ordering"
+    scenes: [TwoPhaseLocking]
+    record: >
+      Shared and exclusive locks, the compatibility matrix, two-phase locking (growing and shrinking),
+      strict 2PL. Timestamp ordering rules for read and write.
+    key_points:
+      - "Shared lock to read, exclusive lock to write"
+      - "2PL: never acquire a lock after releasing one"
+      - "Timestamp ordering: older transactions go first"
+
+  - id: U4-05
+    unit: 4
+    title: "Deadlock Handling"
+    scenes: [DeadlockWaitFor]
+    record: >
+      Wait-for graph, detection and recovery (victim selection), prevention with
+      wait-die and wound-wait, and timeouts.
+    key_points:
+      - "Deadlock = a cycle of transactions waiting on each other"
+      - "Detect it with a wait-for graph"
+      - "Prevent it with wait-die or wound-wait"
+
+  - id: U4-06
+    unit: 4
+    title: "Recovery: Log-Based Recovery & Checkpoints"
+    scenes: [LogRecovery]
+    record: >
+      Write-ahead logging, deferred vs immediate update, UNDO and REDO lists after a crash,
+      and how checkpoints shorten recovery. End with a real-world scenario (ATM crash mid-transfer).
+    key_points:
+      - "Log first, then change the data (write-ahead logging)"
+      - "REDO committed transactions, UNDO the rest"
+      - "Checkpoints mean we only scan the log from the last checkpoint"
+
+  # ============================ UNIT V ============================
+  - id: U5-01
+    unit: 5
+    title: "NoSQL Databases: Four Families"
+    scenes: [NoSQLTypes]
+    record: >
+      Why NoSQL appeared (scale, flexible schema). Key-value (Redis), document (MongoDB),
+      column-family (Cassandra), graph (Neo4j) with one use-case each.
+    key_points:
+      - "Key-value: fastest lookups"
+      - "Document: flexible JSON-like records"
+      - "Column-family: huge write-heavy data"
+      - "Graph: relationships first"
+
+  - id: U5-02
+    unit: 5
+    title: "CAP Theorem & Relational vs NoSQL"
+    scenes: [CAPTheorem]
+    record: >
+      Consistency, availability, partition tolerance — you can guarantee only two when the network splits.
+      Comparison table: schema, scaling, transactions (ACID vs BASE), query language.
+    key_points:
+      - "During a network partition: choose consistency or availability"
+      - "Relational = strict schema + ACID"
+      - "NoSQL = flexible schema + horizontal scale"
+
+  - id: U5-03
+    unit: 5
+    title: "MongoDB CRUD Operations"
+    scenes: []
+    record: >
+      Screen recording in MongoDB Compass / mongosh: insertOne, insertMany, find with filters and
+      projection, updateOne with $set, deleteOne. Compare each with the SQL statement.
+    key_points:
+      - "Collections hold documents (like tables hold rows)"
+      - "find() = SELECT, updateOne() = UPDATE"
+
+  - id: U5-04
+    unit: 5
+    title: "Case Study: Designing & Querying a MongoDB Database"
+    scenes: []
+    record: >
+      Design an e-commerce catalogue: embed vs reference, then query it.
+      Close with database security and ethics: access control, encryption, privacy, consent.
+    key_points:
+      - "Embed data that is read together"
+      - "Reference data that is shared or grows without limit"
+      - "Security and ethics are part of database design"
+
+  # ============================ LABS ============================
+  # Lab episodes are mostly Tella screen recordings of MySQL Workbench.
+  - id: LAB-01
+    unit: lab
+    title: "Lab 1: ER/EER Diagram for a Real Application"
+    scenes: [ERDiagramBasics, ERToTables]
+    record: "Build a full ER/EER diagram in ERDPlus, convert to tables and normalise."
+    key_points: ["Identify entities, keys and cardinalities", "Convert, then normalise to 3NF"]
+
+  - id: LAB-02
+    unit: lab
+    title: "Lab 2: DDL — Tables, Constraints, Indexes, Sequences, Synonyms"
+    scenes: []
+    record: "Library management DDL script: all constraints, an index, AUTO_INCREMENT / sequence, synonym (Oracle) or view alias (MySQL)."
+    key_points: ["Every constraint type in one script", "Indexes for speed, sequences for IDs"]
+
+  - id: LAB-03
+    unit: lab
+    title: "Lab 3: DML — Insert, Update, Delete, Search & Sort"
+    scenes: [SQLQueryOrder]
+    record: "Employee management: INSERT/UPDATE/DELETE, WHERE with ranges and LIKE, ORDER BY, LIMIT."
+    key_points: ["LIKE 'A%' matches names starting with A", "ORDER BY ... LIMIT gives top-N"]
+
+  - id: LAB-04
+    unit: lab
+    title: "Lab 4: Aggregates and Joins"
+    scenes: [SQLJoins]
+    record: "COUNT/AVG/SUM/MIN/MAX with GROUP BY and HAVING; INNER, LEFT and RIGHT JOIN."
+    key_points: ["HAVING filters after grouping", "LEFT JOIN keeps unmatched left rows"]
+
+  - id: LAB-05
+    unit: lab
+    title: "Lab 5: Creating Views"
+    scenes: []
+    record: "A view showing only employee name, job title and salary; query and drop it."
+    key_points: ["Views hide columns users should not see"]
+
+  - id: LAB-06
+    unit: lab
+    title: "Lab 6: Nested and Correlated Subqueries"
+    scenes: []
+    record: "Customers with more than three orders; employees earning above their department average."
+    key_points: ["Correlated subqueries reference the outer query"]
+
+  - id: LAB-07
+    unit: lab
+    title: "Lab 7: Stored Procedures and Functions"
+    scenes: []
+    record: "Five tasks: fetch by department, IN/OUT total sales, insert customer, salary grade with CASE, even/odd function."
+    key_points: ["DELIMITER is needed in MySQL", "CALL runs a procedure, SELECT runs a function"]
+
+  - id: LAB-08
+    unit: lab
+    title: "Lab 8: Triggers for Audit, Sync and Validation"
+    scenes: [TriggerFlow]
+    record: "Employee audit on DELETE, Orders -> Inventory stock update, minimum-salary validation with SIGNAL."
+    key_points: ["OLD and NEW hold the row before and after", "SIGNAL stops an invalid change"]
+
+  - id: LAB-09
+    unit: lab
+    title: "Lab 9: Cursors for Row-by-Row Processing"
+    scenes: []
+    record: "Cursor over Sales to fill a Sales Summary table, with a CONTINUE HANDLER for NOT FOUND."
+    key_points: ["DECLARE, OPEN, FETCH, CLOSE", "Use a handler to end the loop"]
+
+  - id: LAB-10
+    unit: lab
+    title: "Lab 10: Mini Project Walkthrough"
+    scenes: []
+    record: "Problem statement -> ER diagram -> 3NF -> MySQL implementation -> stored procedure/trigger -> simple HTML/Python front end -> documentation."
+    key_points: ["Design first, code second", "Show screenshots of every step in your report"]

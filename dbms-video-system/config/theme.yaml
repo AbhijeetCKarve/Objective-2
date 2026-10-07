@@ -1,0 +1,77 @@
+# ------------------------------------------------------------------
+#  THEME = the "look and sound" of every video in the series.
+#  Change a value here once and every episode follows it.
+# ------------------------------------------------------------------
+
+series_name: "DBMS Made Simple"
+channel: "DES Pune University · B.Tech ECE (AIML) · ETCS302"
+presenter: "Your Name"            # shown in the lower-third on Tella recordings
+
+# Output video format (YouTube / LMS friendly)
+resolution: [1920, 1080]
+fps: 30
+
+colors:
+  background: "#0F172A"   # deep navy – used behind every card and fade
+  surface:    "#1E293B"   # boxes / table cells
+  text:       "#F8FAFC"   # main text
+  muted:      "#94A3B8"   # small labels
+  primary:    "#38BDF8"   # highlights, arrows
+  accent:     "#F59E0B"   # keys, warnings, "look here"
+  success:    "#22C55E"
+  danger:     "#EF4444"
+
+# One colour per syllabus unit, so students recognise the unit at a glance
+unit_colors:
+  1: "#38BDF8"   # Intro & ER
+  2: "#A78BFA"   # Relational model & normalisation
+  3: "#34D399"   # SQL & PL/SQL
+  4: "#F59E0B"   # Transactions & concurrency
+  5: "#F472B6"   # NoSQL
+  lab: "#FB923C" # Lab walkthroughs
+
+unit_names:
+  1: "Unit I · Database Systems & Architecture"
+  2: "Unit II · Relational Model & Design"
+  3: "Unit III · SQL and PL/SQL"
+  4: "Unit IV · Transactions & Concurrency"
+  5: "Unit V · Advanced Topics (NoSQL)"
+  lab: "Lab Walkthrough"
+
+fonts:
+  # Names are looked up through fontconfig (Linux/macOS, and the gyan.dev FFmpeg build on Windows).
+  # If text shows up in the wrong font, put a .ttf/.otf file path in *_file instead.
+  heading: "Inter"
+  body: "Inter"
+  mono: "DejaVu Sans Mono"
+  heading_file: ""        # e.g. assets/fonts/Inter-Bold.ttf
+  body_file: ""
+
+cards:
+  title_seconds: 4.5
+  points_seconds: 9
+  end_seconds: 6
+  placeholder_seconds: 5
+
+transitions:
+  fade_seconds: 0.4       # every segment fades in/out from the background colour
+  whoosh: ""              # optional Mixkit SFX, e.g. assets/sfx/whoosh.wav
+
+lower_third:
+  enabled: true
+  start: 1.0              # seconds into the Tella recording
+  duration: 5.0
+
+audio:
+  target_lufs: -14        # YouTube's loudness target
+  true_peak: -1.5
+  music_volume: 0.20      # music level before ducking (0.0 – 1.0)
+  duck_music: true        # music automatically dips when you speak
+  default_music: "assets/music/default.mp3"
+  unit_music:             # optional: a different track per unit
+    1: ""
+    2: ""
+    3: ""
+    4: ""
+    5: ""
+    lab: ""
